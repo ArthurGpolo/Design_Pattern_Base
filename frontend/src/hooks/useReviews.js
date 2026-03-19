@@ -70,16 +70,6 @@ export function useReviews({ initialReviews = [], fetchOnMount = true } = {}) {
     }
   }, []);
 
-  /**
-   * Função responsável por atualizar uma review existente
-   *
-   * Segue o endpoint:
-   * PUT /reviews/:reviewId
-   *
-   * Recebe:
-   * - reviewId: ID da review a ser atualizada
-   * - updatedData: { rating, comment, author }
-   */
   const editReview = useCallback(async (reviewId, updatedData) => {
     setLoading(true);
     setError(null);
@@ -104,7 +94,6 @@ export function useReviews({ initialReviews = [], fetchOnMount = true } = {}) {
 
       const updatedReview = await response.json();
 
-      // Atualizamos o estado local sem precisar refazer toda a requisição
       setReviews((prev) =>
         prev.map((rev) =>
           rev.id === reviewId ? updatedReview : rev

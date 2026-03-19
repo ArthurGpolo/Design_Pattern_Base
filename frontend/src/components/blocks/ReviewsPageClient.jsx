@@ -121,37 +121,81 @@ export function ReviewsPageClient({ initialReviews }) {
 
               <div className='flex justify-end gap-1'>
                 <Dialog>
-                  <form className='flex justify-end mt-2'>
+                  {/* Formulário de edição de review */}
+                  <form className='flex justify-end mt-2'
+                    onSubmit={async (e) => {
+
+                      // Pega os valores dos inputs do form
+                      const atualizarDados = {
+                        author: e.target.name,
+                        rating: e.target.avaliacao,
+                        comment: e.target.comentario,
+                      };
+                      console.log(atualizarDados);
+                      
+                      // Chama o hook editReview que faz PUT na API
+                      await editReview(review.id, atualizarDados);
+
+                      // Fecha o dialog automaticamente após salvar
+                      e.target.closest('form')?.querySelector('button[type="button"]')?.click(atualizarDados);
+                    }}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="outline"><Search /></Button>
                     </DialogTrigger>
+
                     <DialogContent className="sm:max-w-sm">
                       <DialogHeader>
                         <DialogTitle>Editar Review</DialogTitle>
                         <DialogDescription>
-                          Faça alterações do seu review aqui. Click em salvar quando finalizar.
+                          Faça alterações do seu review aqui. Clique em salvar quando finalizar.
                         </DialogDescription>
                       </DialogHeader>
+
                       <FieldGroup>
+                        {/* Campo Nome */}
                         <Field>
-                          <Label htmlFor="name-1">Nome</Label>
-                          <Input id="name-1" name="name" defaultValue="Puxar o nome" />
+                          <Label htmlFor={`name`}>Nome</Label>
+                          <Input
+                            id={`name`}
+                            name="name"
+                            defaultValue={review.author} // preenche com o autor atual
+                          />
                         </Field>
+
+                        {/* Campo Avaliação */}
                         <Field>
-                          <Label htmlFor="comentario-1">Avaliação</Label>
-                          <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
+                          <Label htmlFor={`avaliacao`}>Avaliação</Label>
+                          <Input
+                            id={`avaliacao}`}
+                            name="avaliacao"
+                            type="number"
+                            min={1}
+                            max={5}
+                            defaultValue={review.rating} // preenche com a avaliação atual
+                          />
                         </Field>
-                        <Label htmlFor="comentario-1">Comentário</Label>
+
+                        {/* Campo Comentário */}
+                        <Label htmlFor={`comentario`}>Comentário</Label>
                         <InputGroup>
                           <InputGroupTextarea
-                            id="block-end-textarea"
-                            placeholder="Puxar comentário"
+                            id={`comentario`}
+                            name="comentario"
+                            placeholder="Digite o comentário"
                             className={'h-20'}
+                            defaultValue={review.comment} // preenche com o comentário atual
                           />
                         </InputGroup>
                       </FieldGroup>
+
                       <DialogFooter>
-                        <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
+                        {/* Botão de salvar que fecha o dialog ao submeter */}
+                        <DialogClose asChild>
+                          <Button type="submit" className={'w-full bg-orange-600'}>
+                            Salvar
+                          </Button>
+                        </DialogClose>
                       </DialogFooter>
                     </DialogContent>
                   </form>
