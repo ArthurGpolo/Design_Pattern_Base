@@ -71,6 +71,55 @@ export function useReviews({ initialReviews = [], fetchOnMount = true } = {}) {
   }, []);
 
   /**
+   * Função responsável por atualizar uma review existente
+   *
+   * Segue o endpoint:
+   * PUT /reviews/:reviewId
+   *
+   * Recebe:
+   * - reviewId: ID da review a ser atualizada
+   * - updatedData: { rating, comment, author }
+   */
+  const editReview = useCallback(async (reviewId, updatedData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/reviews/${reviewId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          `Erro ao atualizar review (status ${response.status})`
+        );
+      }
+
+      const updatedReview = await response.json();
+
+      // Atualizamos o estado local sem precisar refazer toda a requisição
+      setReviews((prev) =>
+        prev.map((rev) =>
+          rev.id === reviewId ? updatedReview : rev
+        )
+      );
+
+      return updatedReview;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
    * useEffect pode disparar automaticamente a primeira busca de receitas,
    * dependendo da flag `fetchOnMount`. Isso permite usar o hook tanto em:
    * - páginas puramente client-side (fetchOnMount = true, padrão)
@@ -93,5 +142,6 @@ export function useReviews({ initialReviews = [], fetchOnMount = true } = {}) {
     loading,
     error,
     refetch: fetchReviews,
+    editReview,
   };
 }

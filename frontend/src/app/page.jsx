@@ -7,7 +7,22 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { ChefHat, CookingPot } from 'lucide-react';
+import { ChefHat, CookingPot, Search } from 'lucide-react';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { InputGroup, InputGroupTextarea } from '@/components/ui/input-group';
 
 async function getRecipes() {
   try {
@@ -55,7 +70,7 @@ export default async function Home() {
   const reviews = await getReviews();
 
   return (<>
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white px-4 py-10">
+    <div className="min-h-screen bg-linear-to-b from-orange-50 to-white px-4 py-10">
       <div className="mx-auto w-full max-w-6xl">
 
         <Tabs defaultValue="recipes" className="w-full">
@@ -80,7 +95,7 @@ export default async function Home() {
                 value="recipes"
                 className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow"
               >
-                <CookingPot className="text-orange-500"/> Receitas
+                <CookingPot className="text-orange-500" /> Receitas
               </TabsTrigger>
 
               <TabsTrigger
@@ -94,21 +109,95 @@ export default async function Home() {
           </div>
 
           {/* CONTEÚDO */}
+
           <TabsContent value="recipes" className="mt-0">
+            <Dialog>
+              <form className='flex mb-5'>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className={'bg-orange-600 text-white p-4'}>Adicionar nova receita</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-sm">
+                  <DialogHeader>
+                    <DialogTitle>Nova Receita</DialogTitle>
+                    <DialogDescription>
+                      Adicione novas receitas aqui. Click em salvar quando finalizar.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="name-1">Nome</Label>
+                      <Input id="name-1" name="name" defaultValue="Puxar o nome" />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="comentario-1">Avaliação</Label>
+                      <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
+                    </Field>
+                    <Label htmlFor="comentario-1">Comentário</Label>
+                    <InputGroup>
+                      <InputGroupTextarea
+                        id="block-end-textarea"
+                        placeholder="Puxar comentário"
+                        className={'h-20'}
+                      />
+                    </InputGroup>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </form>
+            </Dialog>
             <div className="rounded-2xl shadow-sm border">
               <RecipesPageClient initialRecipes={recipes} />
             </div>
           </TabsContent>
 
+
           <TabsContent value="reviews" className="mt-0">
+            <Dialog>
+              <form className='flex mb-5'>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className={'bg-orange-600 text-white p-4'}>Adicionar nova review</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-sm">
+                  <DialogHeader>
+                    <DialogTitle>Nova Receita</DialogTitle>
+                    <DialogDescription>
+                      Adicione novas reviews aqui. Click em salvar quando finalizar.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="name-1">Nome</Label>
+                      <Input id="name-1" name="name" defaultValue="Puxar o nome" />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="comentario-1">Avaliação</Label>
+                      <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
+                    </Field>
+                    <Label htmlFor="comentario-1">Comentário</Label>
+                    <InputGroup>
+                      <InputGroupTextarea
+                        id="block-end-textarea"
+                        placeholder="Puxar comentário"
+                        className={'h-20'}
+                      />
+                    </InputGroup>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </form>
+            </Dialog>
             <div className="rounded-2xl shadow-sm border">
               <ReviewsPageClient initialReviews={reviews} />
             </div>
           </TabsContent>
 
         </Tabs>
-      </div>
-    </div>
+      </div >
+    </div >
   </>);
 }
 

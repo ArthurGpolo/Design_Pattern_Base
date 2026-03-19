@@ -1,16 +1,32 @@
 'use client';
 
 import { useReviews } from '@/hooks/useReviews';
-import { RotateCw, Star } from 'lucide-react';
+import { RotateCw, Search, Star, Trash } from 'lucide-react';
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { InputGroup, InputGroupInput, InputGroupButton, InputGroupAddon, InputGroupText, InputGroupTextarea } from '../ui/input-group';
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 export function ReviewsPageClient({ initialReviews }) {
-  const { reviews, loading, error, refetch } = useReviews({
+  const { reviews, loading, error, refetch, editReview } = useReviews({
     initialReviews,
     fetchOnMount: initialReviews.length === 0,
   });
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-orange-50 to-white px-4 py-10">
+    <div className="min-h-screen w-full bg-linear-to-b from-orange-50 to-white px-4 py-10">
       <main className="mx-auto mt-10 w-full max-w-5xl">
 
         {/* Header */}
@@ -102,8 +118,85 @@ export function ReviewsPageClient({ initialReviews }) {
                 </span>
               </div>
 
+
+              <div className='flex justify-end gap-1'>
+                <Dialog>
+                  <form className='flex justify-end mt-2'>
+                    <DialogTrigger asChild>
+                      <Button variant="outline"><Search /></Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-sm">
+                      <DialogHeader>
+                        <DialogTitle>Editar Review</DialogTitle>
+                        <DialogDescription>
+                          Faça alterações do seu review aqui. Click em salvar quando finalizar.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <FieldGroup>
+                        <Field>
+                          <Label htmlFor="name-1">Nome</Label>
+                          <Input id="name-1" name="name" defaultValue="Puxar o nome" />
+                        </Field>
+                        <Field>
+                          <Label htmlFor="comentario-1">Avaliação</Label>
+                          <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
+                        </Field>
+                        <Label htmlFor="comentario-1">Comentário</Label>
+                        <InputGroup>
+                          <InputGroupTextarea
+                            id="block-end-textarea"
+                            placeholder="Puxar comentário"
+                            className={'h-20'}
+                          />
+                        </InputGroup>
+                      </FieldGroup>
+                      <DialogFooter>
+                        <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+
+                <Dialog>
+                  <form className='flex justify-end mt-2'>
+                    <DialogTrigger asChild>
+                      <Button variant="outline"><Trash /></Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-sm">
+                      <DialogHeader>
+                        <DialogTitle>Deletar Review</DialogTitle>
+                        <DialogDescription>
+                          Aqui você pode apagar suas reviews. Click em deletar para apagar.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <FieldGroup>
+                        <Field>
+                          <Label htmlFor="name-1">Nome</Label>
+                          <Input id="name-1" name="name" defaultValue="Puxar o nome" />
+                        </Field>
+                        <Field>
+                          <Label htmlFor="comentario-1">Avaliação</Label>
+                          <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
+                        </Field>
+                        <Label htmlFor="comentario-1">Comentário</Label>
+                        <InputGroup>
+                          <InputGroupTextarea
+                            id="block-end-textarea"
+                            placeholder="Puxar comentário"
+                            className={'h-20'}
+                          />
+                        </InputGroup>
+                      </FieldGroup>
+                      <DialogFooter>
+                        <Button type="submit" className={'w-full bg-orange-600'}>Deletar</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+              </div>
+
               {/* Hover glow */}
-              <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-gradient-to-r from-transparent via-orange-100/40 to-transparent rounded-2xl" />
+              < div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-linear-to-r from-transparent via-orange-100/40 to-transparent rounded-2xl" />
             </li>
           ))}
         </ul>
