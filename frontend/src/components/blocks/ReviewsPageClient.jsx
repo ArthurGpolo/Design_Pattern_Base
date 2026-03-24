@@ -1,11 +1,10 @@
 'use client';
 
 import { useReviews } from '@/hooks/useReviews';
-import { RotateCw, Search, Star, Trash } from 'lucide-react';
+import { RotateCw, Star, Trash } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -13,17 +12,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { InputGroup, InputGroupInput, InputGroupButton, InputGroupAddon, InputGroupText, InputGroupTextarea } from '../ui/input-group';
+import { InputGroup, InputGroupTextarea } from '../ui/input-group';
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { useState } from 'react';
+import UpdateModal from '../modals/UpdateModal';
 
 export function ReviewsPageClient({ initialReviews }) {
   const { reviews, loading, error, refetch, editReview } = useReviews({
     initialReviews,
     fetchOnMount: initialReviews.length === 0,
   });
+
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-orange-50 to-white px-4 py-10">
@@ -45,9 +47,7 @@ export function ReviewsPageClient({ initialReviews }) {
             onClick={refetch}
             className="flex items-center rounded-full bg-orange-500 px-5 py-2 text-sm font-medium text-white shadow-md transition-all hover:scale-[1.05] hover:bg-orange-600 active:scale-95"
           >
-            <span className="transition-transform group-hover:rotate-180">
-              <RotateCw className='h-3.5' />
-            </span>
+            <RotateCw className='h-3.5 mr-2' />
             Recarregar
           </button>
         </header>
@@ -87,7 +87,7 @@ export function ReviewsPageClient({ initialReviews }) {
           {reviews.map((review) => (
             <li
               key={review.id}
-              className="group rounded-2xl border border-orange-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
+              className="group relative rounded-2xl border border-orange-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="flex items-center justify-between">
 
@@ -108,7 +108,6 @@ export function ReviewsPageClient({ initialReviews }) {
 
               {/* Footer */}
               <div className="mt-4 flex items-center justify-between">
-
                 <span className="text-xs text-zinc-400">
                   Avaliado por
                 </span>
@@ -118,129 +117,81 @@ export function ReviewsPageClient({ initialReviews }) {
                 </span>
               </div>
 
+              {/* Actions */}
+              <div className='flex justify-end gap-2 mt-3'>
 
-              <div className='flex justify-end gap-1'>
+              {/* Update Modal */}
+                <UpdateModal
+                  review={review}
+                  updateFunction={editReview}
+                />
+
+
+                {/* Delete Dialog */}
                 <Dialog>
-                  {/* Formulário de edição de review */}
-                  <form className='flex justify-end mt-2'
-                    onSubmit={async (e) => {
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      <Trash />
+                    </Button>
+                  </DialogTrigger>
 
-                      // Pega os valores dos inputs do form
-                      const atualizarDados = {
-                        author: e.target.name,
-                        rating: e.target.avaliacao,
-                        comment: e.target.comentario,
-                      };
-                      console.log(atualizarDados);
-                      
-                      // Chama o hook editReview que faz PUT na API
-                      await editReview(review.id, atualizarDados);
+                  <DialogContent className="sm:max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle>Deletar Review</DialogTitle>
+                      <DialogDescription>
+                        Aqui você pode apagar sua review.
+                      </DialogDescription>
+                    </DialogHeader>
 
-                      // Fecha o dialog automaticamente após salvar
-                      e.target.closest('form')?.querySelector('button[type="button"]')?.click(atualizarDados);
-                    }}
-                  >
-                    <DialogTrigger asChild>
-                      <Button variant="outline"><Search /></Button>
-                    </DialogTrigger>
-
-                    <DialogContent className="sm:max-w-sm">
-                      <DialogHeader>
-                        <DialogTitle>Editar Review</DialogTitle>
-                        <DialogDescription>
-                          Faça alterações do seu review aqui. Clique em salvar quando finalizar.
-                        </DialogDescription>
-                      </DialogHeader>
-
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        // implementar delete aqui futuramente
+                        console.log('Deletar review:', review.id);
+                      }}
+                    >
                       <FieldGroup>
-                        {/* Campo Nome */}
                         <Field>
-                          <Label htmlFor={`name`}>Nome</Label>
+                          <Label htmlFor={`name-${review.id}`}>Nome</Label>
                           <Input
-                            id={`name`}
-                            name="name"
-                            defaultValue={review.author} // preenche com o autor atual
+                            id={`name-${review.id}`}
+                            defaultValue={review.author}
+                            readOnly
                           />
                         </Field>
 
-                        {/* Campo Avaliação */}
                         <Field>
-                          <Label htmlFor={`avaliacao`}>Avaliação</Label>
+                          <Label htmlFor={`rating-${review.id}`}>Avaliação</Label>
                           <Input
-                            id={`avaliacao}`}
-                            name="avaliacao"
-                            type="number"
-                            min={1}
-                            max={5}
-                            defaultValue={review.rating} // preenche com a avaliação atual
+                            id={`rating-${review.id}`}
+                            defaultValue={review.rating}
+                            readOnly
                           />
                         </Field>
 
-                        {/* Campo Comentário */}
-                        <Label htmlFor={`comentario`}>Comentário</Label>
+                        <Label htmlFor={`comment-${review.id}`}>Comentário</Label>
                         <InputGroup>
                           <InputGroupTextarea
-                            id={`comentario`}
-                            name="comentario"
-                            placeholder="Digite o comentário"
-                            className={'h-20'}
-                            defaultValue={review.comment} // preenche com o comentário atual
+                            id={`comment-${review.id}`}
+                            defaultValue={review.comment}
+                            className="h-20"
+                            readOnly
                           />
                         </InputGroup>
                       </FieldGroup>
 
-                      <DialogFooter>
-                        {/* Botão de salvar que fecha o dialog ao submeter */}
-                        <DialogClose asChild>
-                          <Button type="submit" className={'w-full bg-orange-600'}>
-                            Salvar
-                          </Button>
-                        </DialogClose>
+                      <DialogFooter className="mt-4">
+                        <Button type="submit" className="w-full bg-orange-600">
+                          Deletar
+                        </Button>
                       </DialogFooter>
-                    </DialogContent>
-                  </form>
-                </Dialog>
-
-                <Dialog>
-                  <form className='flex justify-end mt-2'>
-                    <DialogTrigger asChild>
-                      <Button variant="outline"><Trash /></Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm">
-                      <DialogHeader>
-                        <DialogTitle>Deletar Review</DialogTitle>
-                        <DialogDescription>
-                          Aqui você pode apagar suas reviews. Click em deletar para apagar.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FieldGroup>
-                        <Field>
-                          <Label htmlFor="name-1">Nome</Label>
-                          <Input id="name-1" name="name" defaultValue="Puxar o nome" />
-                        </Field>
-                        <Field>
-                          <Label htmlFor="comentario-1">Avaliação</Label>
-                          <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
-                        </Field>
-                        <Label htmlFor="comentario-1">Comentário</Label>
-                        <InputGroup>
-                          <InputGroupTextarea
-                            id="block-end-textarea"
-                            placeholder="Puxar comentário"
-                            className={'h-20'}
-                          />
-                        </InputGroup>
-                      </FieldGroup>
-                      <DialogFooter>
-                        <Button type="submit" className={'w-full bg-orange-600'}>Deletar</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </form>
+                    </form>
+                  </DialogContent>
                 </Dialog>
               </div>
 
               {/* Hover glow */}
-              < div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-linear-to-r from-transparent via-orange-100/40 to-transparent rounded-2xl" />
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-linear-to-r from-transparent via-orange-100/40 to-transparent rounded-2xl" />
             </li>
           ))}
         </ul>
