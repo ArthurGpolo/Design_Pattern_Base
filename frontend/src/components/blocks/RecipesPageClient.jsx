@@ -1,6 +1,7 @@
 'use client';
 
 import { useRecipes } from '@/hooks/useRecipes';
+import { useState } from 'react';
 
 import {
   Card,
@@ -25,12 +26,17 @@ import { InputGroup, InputGroupInput, InputGroupButton, InputGroupAddon, InputGr
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import UpdateModalRecipe from '../modals/UpdateModalRecipe';
+import DeleteModalRecipe from '../modals/DeleteModalRecipe';
 
 export function RecipesPageClient({ initialRecipes }) {
-  const { recipes, loading, error, refetch } = useRecipes({
+  const { recipes, loading, error, refetch, editRecipe, deleteRecipe } = useRecipes({
     initialRecipes,
     fetchOnMount: initialRecipes.length === 0,
   });
+
+    const [open, setOpen] = useState(false);
+  
 
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-orange-50 to-white px-4 py-10">
@@ -159,80 +165,46 @@ export function RecipesPageClient({ initialRecipes }) {
                     </div>
                   )}
 
-                  <div className='flex justify-end gap-1'>
-                    <Dialog>
-                      <form className='flex justify-end mt-2'>
-                        <DialogTrigger asChild>
-                          <Button variant="outline"><Search /></Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-sm">
-                          <DialogHeader>
-                            <DialogTitle>Editar Receita</DialogTitle>
-                            <DialogDescription>
-                              Faça alterações na sua receita aqui. Click em salvar quando finalizar.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <FieldGroup>
-                            <Field>
-                              <Label htmlFor="name-1">Nome</Label>
-                              <Input id="name-1" name="name" defaultValue="Puxar o nome" />
-                            </Field>
-                            <Field>
-                              <Label htmlFor="comentario-1">Avaliação</Label>
-                              <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
-                            </Field>
-                            <Label htmlFor="comentario-1">Descrição</Label>
-                            <InputGroup>
-                              <InputGroupTextarea
-                                id="block-end-textarea"
-                                placeholder="Puxar comentário"
-                                className={'h-20'}
-                              />
-                            </InputGroup>
-                          </FieldGroup>
-                          <DialogFooter>
-                            <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </form>
-                    </Dialog>
+                  {/* Preparo */}
+                  {Array.isArray(recipe.steps) && recipe.steps.length > 0 && (
+                    <div className="mt-4">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-orange-400">
+                        Modo de preparo
+                      </p>
 
-                    <Dialog>
-                      <form className='flex justify-end mt-2'>
-                        <DialogTrigger asChild>
-                          <Button variant="outline"><Trash /></Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-sm">
-                          <DialogHeader>
-                            <DialogTitle>Deletar Receita</DialogTitle>
-                            <DialogDescription>
-                              Aqui você pode apagar suas receita. Click em deletar para apagar.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <FieldGroup>
-                            <Field>
-                              <Label htmlFor="name-1">Nome</Label>
-                              <Input id="name-1" name="name" defaultValue="Puxar o nome" />
-                            </Field>
-                            <Field>
-                              <Label htmlFor="comentario-1">Avaliação</Label>
-                              <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
-                            </Field>
-                            <Label htmlFor="comentario-1">Comentário</Label>
-                            <InputGroup>
-                              <InputGroupTextarea
-                                id="block-end-textarea"
-                                placeholder="Puxar comentário"
-                                className={'h-20'}
-                              />
-                            </InputGroup>
-                          </FieldGroup>
-                          <DialogFooter>
-                            <Button type="submit" className={'w-full bg-orange-600'}>Deletar</Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </form>
-                    </Dialog>
+                      <div className="flex flex-wrap gap-2">
+                        {recipe.steps.slice(0, 4).map((item, index) => (
+                          <span
+                            key={index}
+                            className="rounded-full border border-orange-200 bg-orange-100 px-3 py-1 text-xs text-orange-700 transition hover:bg-orange-200"
+                          >
+                            {item}
+                          </span>
+                        ))}
+
+                        {recipe.ingredients.length > 4 && (
+                          <span className="text-xs text-zinc-400">
+                            +{recipe.ingredients.length - 4}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className='flex justify-end gap-1'>
+
+                    {/* Update Modal */}
+                    <UpdateModalRecipe
+                      recipe={recipe}
+                      updateFunction={editRecipe}
+                    />
+
+                    {/* Delete Modal */}
+                    <DeleteModalRecipe
+                      recipe={recipe}
+                      updateFunction={deleteRecipe}
+                    />
+
                   </div>
 
                 </div>

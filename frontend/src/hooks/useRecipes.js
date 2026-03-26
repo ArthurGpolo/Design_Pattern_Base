@@ -70,6 +70,77 @@ export function useRecipes({ initialRecipes = [], fetchOnMount = true } = {}) {
     }
   }, []);
 
+  const editRecipe = useCallback(async (id, updateData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/recipes/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(
+          `Erro ao atualizar recipe (${response.status}): ${text}`
+        );
+      }
+
+      const updatedRecipe = await response.json();
+
+      setRecipes((prev) =>
+        prev.map((rec) =>
+          rec.id === id ? updatedRecipe : rec
+        )
+      );
+
+      return updatedRecipe;
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+const deleteRecipe = useCallback(async (id) => {
+  setLoading(true);
+  setError(null);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/recipes/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        `Erro ao deletar recipe (${response.status}): ${text}`
+      );
+    }
+
+    setRecipes((prev) =>
+      prev.filter((rec) => rec.id !== id)
+    );
+
+  } catch (err) {
+    console.error(err);
+    setError(err instanceof Error ? err.message : 'Erro desconhecido');
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+
   /**
    * useEffect pode disparar automaticamente a primeira busca de receitas,
    * dependendo da flag `fetchOnMount`. Isso permite usar o hook tanto em:
@@ -93,5 +164,7 @@ export function useRecipes({ initialRecipes = [], fetchOnMount = true } = {}) {
     loading,
     error,
     refetch: fetchRecipes,
+    editRecipe,
+    deleteRecipe,
   };
 }

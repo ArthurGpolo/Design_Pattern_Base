@@ -16,11 +16,12 @@ import { Input} from "../ui/input";
 import { InputGroup, InputGroupTextarea } from "../ui/input-group";
 
 
-export default function UpdateModal({
-    review,          // 👈 recebe o review completo
-    updateFunction   // 👈 função editReview
+export default function UpdateModalReview({
+    review,          
+    updateFunction   
 }) {
     const [open, setOpen] = useState(false);
+    const [saving, setSaving] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -39,6 +40,7 @@ export default function UpdateModal({
                 <form
                     onSubmit={async (e) => {
                         e.preventDefault();
+                        setSaving(true);
 
                         const atualizarDados = {
                             author: e.target.teste.value,
@@ -84,8 +86,8 @@ export default function UpdateModal({
                     </FieldGroup>
 
                     <DialogFooter>
-                        <Button type="submit" className="w-full bg-orange-600">
-                            Salvar
+                        <Button type="submit" className="w-full bg-orange-600" disabled={saving}>
+                            {saving ? "Salvando..." : "Salvar"}
                         </Button>
                     </DialogFooter>
                 </form>

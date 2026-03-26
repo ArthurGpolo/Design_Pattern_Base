@@ -17,10 +17,11 @@ import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from 'react';
-import UpdateModal from '../modals/UpdateModal';
+import UpdateModalReview from '../modals/UpdateModalReview';
+import DeleteModalReview from '../modals/DeleteModalReview';
 
 export function ReviewsPageClient({ initialReviews }) {
-  const { reviews, loading, error, refetch, editReview } = useReviews({
+  const { reviews, loading, error, refetch, editReview, deleteReview } = useReviews({
     initialReviews,
     fetchOnMount: initialReviews.length === 0,
   });
@@ -120,74 +121,20 @@ export function ReviewsPageClient({ initialReviews }) {
               {/* Actions */}
               <div className='flex justify-end gap-2 mt-3'>
 
-              {/* Update Modal */}
-                <UpdateModal
+                {/* Update Modal */}
+                <UpdateModalReview
                   review={review}
                   updateFunction={editReview}
                 />
 
-
-                {/* Delete Dialog */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline">
-                      <Trash />
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent className="sm:max-w-sm">
-                    <DialogHeader>
-                      <DialogTitle>Deletar Review</DialogTitle>
-                      <DialogDescription>
-                        Aqui você pode apagar sua review.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        // implementar delete aqui futuramente
-                        console.log('Deletar review:', review.id);
-                      }}
-                    >
-                      <FieldGroup>
-                        <Field>
-                          <Label htmlFor={`name-${review.id}`}>Nome</Label>
-                          <Input
-                            id={`name-${review.id}`}
-                            defaultValue={review.author}
-                            readOnly
-                          />
-                        </Field>
-
-                        <Field>
-                          <Label htmlFor={`rating-${review.id}`}>Avaliação</Label>
-                          <Input
-                            id={`rating-${review.id}`}
-                            defaultValue={review.rating}
-                            readOnly
-                          />
-                        </Field>
-
-                        <Label htmlFor={`comment-${review.id}`}>Comentário</Label>
-                        <InputGroup>
-                          <InputGroupTextarea
-                            id={`comment-${review.id}`}
-                            defaultValue={review.comment}
-                            className="h-20"
-                            readOnly
-                          />
-                        </InputGroup>
-                      </FieldGroup>
-
-                      <DialogFooter className="mt-4">
-                        <Button type="submit" className="w-full bg-orange-600">
-                          Deletar
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                {/* Delete Modal */}
+             
+                  <DeleteModalReview
+                    key={review.id}
+                    review={review}
+                    updateFunction={deleteReview}
+                  />
+          
               </div>
 
               {/* Hover glow */}
