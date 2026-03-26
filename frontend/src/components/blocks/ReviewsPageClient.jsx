@@ -19,9 +19,10 @@ import { Label } from "@/components/ui/label"
 import { useState } from 'react';
 import UpdateModalReview from '../modals/UpdateModalReview';
 import DeleteModalReview from '../modals/DeleteModalReview';
+import PostModalReview from '../modals/PostModalReview';
 
 export function ReviewsPageClient({ initialReviews }) {
-  const { reviews, loading, error, refetch, editReview, deleteReview } = useReviews({
+  const { reviews, loading, error, refetch, editReview, deleteReview, postReview } = useReviews({
     initialReviews,
     fetchOnMount: initialReviews.length === 0,
   });
@@ -30,6 +31,10 @@ export function ReviewsPageClient({ initialReviews }) {
 
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-orange-50 to-white px-4 py-10">
+      {/* POST AQUI */}
+      <PostModalReview
+        updateFunction={postReview}
+      />
       <main className="mx-auto mt-10 w-full max-w-5xl">
 
         {/* Header */}
@@ -128,13 +133,13 @@ export function ReviewsPageClient({ initialReviews }) {
                 />
 
                 {/* Delete Modal */}
-             
-                  <DeleteModalReview
-                    key={review.id}
-                    review={review}
-                    updateFunction={deleteReview}
-                  />
-          
+
+                <DeleteModalReview
+                  key={review.id}
+                  review={review}
+                  updateFunction={deleteReview}
+                />
+
               </div>
 
               {/* Hover glow */}

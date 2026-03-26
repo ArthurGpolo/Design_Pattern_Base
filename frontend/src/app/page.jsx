@@ -111,85 +111,14 @@ export default async function Home() {
           {/* CONTEÚDO */}
 
           <TabsContent value="recipes" className="mt-0">
-            <Dialog>
-              <form className='flex mb-5'>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className={'bg-orange-600 text-white p-4'}>Adicionar nova receita</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-sm">
-                  <DialogHeader>
-                    <DialogTitle>Nova Receita</DialogTitle>
-                    <DialogDescription>
-                      Adicione novas receitas aqui. Click em salvar quando finalizar.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup>
-                    <Field>
-                      <Label htmlFor="name-1">Nome</Label>
-                      <Input id="name-1" name="name" defaultValue="Puxar o nome" />
-                    </Field>
-                    <Field>
-                      <Label htmlFor="comentario-1">Avaliação</Label>
-                      <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
-                    </Field>
-                    <Label htmlFor="comentario-1">Comentário</Label>
-                    <InputGroup>
-                      <InputGroupTextarea
-                        id="block-end-textarea"
-                        placeholder="Puxar comentário"
-                        className={'h-20'}
-                      />
-                    </InputGroup>
-                  </FieldGroup>
-                  <DialogFooter>
-                    <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </form>
-            </Dialog>
-            <div className="rounded-2xl shadow-sm border">
+
+            <div className="rounded-2xl shadow-sm border mt-3">
               <RecipesPageClient initialRecipes={recipes} />
             </div>
           </TabsContent>
 
 
           <TabsContent value="reviews" className="mt-0">
-            <Dialog>
-              <form className='flex mb-5'>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className={'bg-orange-600 text-white p-4'}>Adicionar nova review</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-sm">
-                  <DialogHeader>
-                    <DialogTitle>Nova Receita</DialogTitle>
-                    <DialogDescription>
-                      Adicione novas reviews aqui. Click em salvar quando finalizar.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup>
-                    <Field>
-                      <Label htmlFor="name-1">Nome</Label>
-                      <Input id="name-1" name="name" defaultValue="Puxar o nome" />
-                    </Field>
-                    <Field>
-                      <Label htmlFor="comentario-1">Avaliação</Label>
-                      <Input id="comentario-1" name="avaliacao" defaultValue="Puxar a avalação" />
-                    </Field>
-                    <Label htmlFor="comentario-1">Comentário</Label>
-                    <InputGroup>
-                      <InputGroupTextarea
-                        id="block-end-textarea"
-                        placeholder="Puxar comentário"
-                        className={'h-20'}
-                      />
-                    </InputGroup>
-                  </FieldGroup>
-                  <DialogFooter>
-                    <Button type="submit" className={'w-full bg-orange-600'}>Salvar</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </form>
-            </Dialog>
             <div className="rounded-2xl shadow-sm border">
               <ReviewsPageClient initialReviews={reviews} />
             </div>

@@ -111,30 +111,59 @@ export function useRecipes({ initialRecipes = [], fetchOnMount = true } = {}) {
     }
   }, []);
 
-const deleteRecipe = useCallback(async (id) => {
+  const deleteRecipe = useCallback(async (id) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/recipes/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(
+          `Erro ao deletar recipe (${response.status}): ${text}`
+        );
+      }
+
+      setRecipes((prev) =>
+        prev.filter((rec) => rec.id !== id)
+      );
+
+    } catch (err) {
+      console.error(err);
+      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+const postRecipes = useCallback(async (recipeData) => {
   setLoading(true);
   setError(null);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/recipes/${id}`, {
-      method: 'DELETE',
+    const response = await fetch(`${API_BASE_URL}/recipes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(recipeData),
     });
 
     if (!response.ok) {
-      const text = await response.text();
-      throw new Error(
-        `Erro ao deletar recipe (${response.status}): ${text}`
-      );
+      throw new Error(`Erro ao postar receita (status ${response.status})`);
     }
 
-    setRecipes((prev) =>
-      prev.filter((rec) => rec.id !== id)
-    );
+    const newRecipe = await response.json();
 
+    setRecipes((prev) => [...prev, newRecipe]);
+
+    return newRecipe;
   } catch (err) {
-    console.error(err);
     setError(err instanceof Error ? err.message : 'Erro desconhecido');
-    throw err;
   } finally {
     setLoading(false);
   }
@@ -166,5 +195,6 @@ const deleteRecipe = useCallback(async (id) => {
     refetch: fetchRecipes,
     editRecipe,
     deleteRecipe,
+    postRecipes,
   };
 }

@@ -28,9 +28,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import UpdateModalRecipe from '../modals/UpdateModalRecipe';
 import DeleteModalRecipe from '../modals/DeleteModalRecipe';
+import PostModalRecipe from '../modals/PostModalRecipe';
 
 export function RecipesPageClient({ initialRecipes }) {
-  const { recipes, loading, error, refetch, editRecipe, deleteRecipe } = useRecipes({
+  const { recipes, loading, error, refetch, editRecipe, deleteRecipe, postRecipes } = useRecipes({
     initialRecipes,
     fetchOnMount: initialRecipes.length === 0,
   });
@@ -40,6 +41,10 @@ export function RecipesPageClient({ initialRecipes }) {
 
   return (
     <div className="min-h-screen w-full bg-linear-to-b from-orange-50 to-white px-4 py-10">
+      {/* POST AQUI */}
+            <PostModalRecipe
+              updateFunction={postRecipes}
+            />
       <div className="mx-auto mt-10 w-full max-w-5xl">
 
         <Card className="border border-orange-100 bg-white/80 backdrop-blur-xl shadow-xl rounded-3xl">
