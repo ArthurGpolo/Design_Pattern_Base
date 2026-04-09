@@ -9,11 +9,15 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// Middleware didático para simular atraso em TODAS as requisições
-app.use(async (req, res, next) => {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  next();
-});
+// Middleware didático para simular atraso em TODAS as requisições.
+// Em modo de teste (NODE_ENV === 'test'), o delay é desativado
+// para que os testes rodem rapidamente.
+if (process.env.NODE_ENV !== 'test') {
+  app.use(async (req, res, next) => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    next();
+  });
+}
 
 // Dados em memória
 let nextRecipeId = 1;
@@ -630,8 +634,39 @@ app.delete('/reviews/:reviewId', (req, res) => {
   res.status(204).send();
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor de receitas rodando em http://localhost:${PORT}`);
-  console.log(`Documentação Swagger em http://localhost:${PORT}/api-docs`);
-});
+// Só inicia o servidor HTTP quando NÃO estamos em modo de teste.
+// Em testes, o supertest cria um servidor temporário internamente,
+// então chamar app.listen() aqui causaria conflito de portas.
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Servidor de receitas rodando em http://localhost:${PORT}`);
+    console.log(`Documentação Swagger em http://localhost:${PORT}/api-docs`);
+  });
+}
 
+// ============================================================
+// Função auxiliar para testes
+// ============================================================
+
+/**
+ * Reseta o estado em memória do servidor.
+ *
+ * Usada nos testes para garantir que cada teste comece
+ * com um estado limpo, sem dados deixados por testes anteriores.
+ *
+ * IMPORTANTE: esta função só deve ser chamada em testes.
+ */
+function resetState() {
+  recipes.length = 0;
+  reviews.length = 0;
+  nextRecipeId = 1;
+  nextReviewId = 1;
+}
+
+// ============================================================
+// Exportações para uso nos testes
+// ============================================================
+
+// Exportamos o app (instância do Express) e o resetState.
+// O supertest recebe o app para fazer requisições HTTP sem subir o servidor.
+module.exports = { app, resetState };
